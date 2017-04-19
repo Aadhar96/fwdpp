@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE(discrete_mut_model_test_5)
     extensions::discrete_mut_model dm({ 0, 1 }, { 1, 2 }, { 1, 0.5 }, {}, {},
                                       {}, {});
     KTfwd::GSLrng_t<KTfwd::GSL_RNG_TAUS2> rng(0u);
-
+	unsigned generation = 0; 
     auto wbar = KTfwd::sample_diploid(
         rng.get(), pop.gametes, pop.diploids, pop.mutations, pop.mcounts, 1000,
         0.001, extensions::bind_dmm(dm, pop.mutations, pop.mut_lookup,
