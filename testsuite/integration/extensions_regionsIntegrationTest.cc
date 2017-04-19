@@ -148,9 +148,9 @@ BOOST_AUTO_TEST_CASE(test_bind_vec_drm)
                                                { 1. }, {}, {}, {}, {});
             vdmm.emplace_back(std::move(dmm));
         }
-    auto bound_mutmodels = extensions::bind_vec_dmm(
-        vdmm, pop.mutations, pop.mut_lookup, rng.get(),
-		1e-3,1e-3,&generation);
+    auto bound_mutmodels
+        = extensions::bind_vec_dmm(vdmm, pop.mutations, pop.mut_lookup,
+                                   rng.get(), generation, 1e-3, 1e-3);
     double wbar = sample_diploid(
         rng.get(), pop.gametes, pop.diploids, pop.mutations, pop.mcounts,
         pop.N, &mu[0], bound_mutmodels, bound_recmodels, &rbw[0],
