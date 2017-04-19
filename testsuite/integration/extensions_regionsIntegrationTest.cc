@@ -50,38 +50,16 @@ BOOST_AUTO_TEST_CASE(discrete_mut_model_test_5)
                                       {}, {});
     KTfwd::GSLrng_t<KTfwd::GSL_RNG_TAUS2> rng(0u);
 
-    for (unsigned generation = 0; generation < 10000; ++generation)
-        {
-            auto wbar = KTfwd::sample_diploid(
-                rng.get(), pop.gametes, pop.diploids, pop.mutations,
-                pop.mcounts, 1000, 0.001,
-                extensions::bind_dmm(dm, pop.mutations, pop.mut_lookup,
-                                     rng.get(), 0.001, 0., generation),
-                std::bind(KTfwd::poisson_xover(), rng.get(), 0.001, 0., 2.,
-                          std::placeholders::_1, std::placeholders::_2,
-                          std::placeholders::_3),
-                std::bind(KTfwd::multiplicative_diploid(),
-                          std::placeholders::_1, std::placeholders::_2,
-                          std::placeholders::_3, 2.),
-                pop.neutral, pop.selected);
-            KTfwd::update_mutations(pop.mutations, pop.fixations,
-                                    pop.fixation_times, pop.mut_lookup,
-                                    pop.mcounts, generation, 2000);
-        }
-    BOOST_REQUIRE_EQUAL(pop.mutations.size(), pop.mcounts.size());
-    for (std::size_t i = 0; i < pop.mcounts.size(); ++i)
-        {
-            if (pop.mcounts[i])
-                {
-                    BOOST_REQUIRE(pop.mut_lookup.find(pop.mutations[i].pos)
-                                  != pop.mut_lookup.end());
-                }
-            else
-                {
-                    BOOST_REQUIRE(pop.mut_lookup.find(pop.mutations[i].pos)
-                                  == pop.mut_lookup.end());
-                }
-        }
+    auto wbar = KTfwd::sample_diploid(
+        rng.get(), pop.gametes, pop.diploids, pop.mutations, pop.mcounts, 1000,
+        0.001, extensions::bind_dmm(dm, pop.mutations, pop.mut_lookup,
+                                    rng.get(), 0.001, 0., generation),
+        std::bind(KTfwd::poisson_xover(), rng.get(), 0.001, 0., 2.,
+                  std::placeholders::_1, std::placeholders::_2,
+                  std::placeholders::_3),
+        std::bind(KTfwd::multiplicative_diploid(), std::placeholders::_1,
+                  std::placeholders::_2, std::placeholders::_3, 2.),
+        pop.neutral, pop.selected);
 }
 
 /*
