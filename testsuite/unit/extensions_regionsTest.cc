@@ -7,6 +7,7 @@
 #include <boost/test/unit_test.hpp>
 #include <fwdpp/sugar/GSLrng_t.hpp>
 #include <fwdpp/extensions/regions.hpp>
+#include <fwdpp/type_traits.hpp>
 #include <limits>
 #include "../fixtures/sugar_fixtures.hpp"
 
@@ -276,6 +277,19 @@ BOOST_AUTO_TEST_CASE(discrete_rec_model_test_3)
     static_assert(std::is_same<decltype(x), std::vector<double>>::value,
                   "extensions::dicrete_rec_model::operator() must return "
                   "std::vector<double>");
+}
+
+BOOST_AUTO_TEST_CASE(bound_drm_is_recmodel)
+{
+    extensions::discrete_rec_model drm({ 0, 1 }, { 1, 2 }, { 1, 2 });
+    auto bound = extensions::bind_drm(drm, pop.gametes, pop.mutations,
+                                      rng.get(), 0.001);
+    static_assert(
+        KTfwd::traits::
+            is_rec_model<decltype(bound),
+                         singlepop_popgenmut_fixture::poptype::gamete_t,
+                         singlepop_popgenmut_fixture::poptype::mcont_t>::value,
+        "bound object must be valid recombination model");
 }
 
 // Put it all together into a call to KTfwd::sample_diploid
