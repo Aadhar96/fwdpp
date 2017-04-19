@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE(discrete_mut_model_test_5)
     extensions::discrete_mut_model dm({ 0, 1 }, { 1, 2 }, { 1, 0.5 }, {}, {},
                                       {}, {});
     KTfwd::GSLrng_t<KTfwd::GSL_RNG_TAUS2> rng(0u);
-	unsigned generation = 0; 
+    unsigned generation = 0;
     auto wbar = KTfwd::sample_diploid(
         rng.get(), pop.gametes, pop.diploids, pop.mutations, pop.mcounts, 1000,
         0.001, extensions::bind_dmm(dm, pop.mutations, pop.mut_lookup,
@@ -136,12 +136,24 @@ BOOST_AUTO_TEST_CASE(test_bind_vec_drm)
                 { begin + 3., begin + 7., begin + length }, { 1., 10., 1. });
             vdrm.emplace_back(std::move(drm));
         }
-    auto bound = extensions::bind_vec_drm(vdrm, pop.gametes, pop.mutations,
-                                          rng.get(), mu);
+    auto bound_recmodels = extensions::bind_vec_drm(
+        vdrm, pop.gametes, pop.mutations, rng.get(), mu);
 
+    unsigned generation = 0;
+    std::vector<extensions::discrete_mut_model> vdmm;
+    for (unsigned i = 0; i < 4; ++i)
+        {
+            double begin = static_cast<double>(i) * length;
+            extensions::discrete_mut_model dmm({ begin }, { begin + length },
+                                               { 1. }, {}, {}, {}, {});
+            vdmm.emplace_back(std::move(dmm));
+        }
+    auto bound_mutmodels = extensions::bind_vec_dmm(
+        vdmm, pop.mutations, pop.mut_lookup, rng.get(),
+		1e-3,1e-3,&generation);
     double wbar = sample_diploid(
         rng.get(), pop.gametes, pop.diploids, pop.mutations, pop.mcounts,
-        pop.N, &mu[0], mutmodels, bound, &rbw[0],
+        pop.N, &mu[0], bound_mutmodels, bound_recmodels, &rbw[0],
         [](const gsl_rng* __r, const double __d) {
             return gsl_ran_binomial(__r, __d, 1);
         },

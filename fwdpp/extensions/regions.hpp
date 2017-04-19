@@ -233,6 +233,27 @@ namespace KTfwd
                 std::forward<Args>(args)..., std::ref(mut_lookup));
         }
 
+		/*! Return a vector of callables bount
+		 *  to KTfwd::extensions::discrete_mut_model::make_mut
+		 */
+        template <typename mcont_t, typename lookup_t, class... Args>
+        inline auto
+        bind_vec_dmm(const std::vector<discrete_mut_model> &vdm,
+                     mcont_t &mutations, lookup_t &mut_lookup, Args &&... args)
+            -> std::vector<decltype(bind_dmm(vdm[0], mutations, mut_lookup,
+                                             std::forward<Args>(args)...))>
+        {
+            std::vector<decltype(bind_dmm(vdm[0], mutations, mut_lookup,
+                                          std::forward<Args>(args)...))>
+                rv;
+            for (auto &&dm : vdm)
+                {
+                    rv.emplace_back(bind_dmm(dm, mutations, mut_lookup,
+                                             std::forward<Args>(args)...));
+                }
+            return rv;
+        }
+
         struct discrete_rec_model
         /*!
           Class allowing the simulation of discrete variation
