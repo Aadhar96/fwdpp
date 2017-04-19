@@ -10,7 +10,7 @@
 
 using namespace KTfwd;
 
-BOOST_FIXTURE_TEST_SUITE(test_extensions, singlepop_popgenmut_fixture)
+BOOST_FIXTURE_TEST_SUITE(test_regions, singlepop_popgenmut_fixture)
 
 // Check that extensions::discrete_mut_model::make_mut can be bound
 // with placeholders, that the resulting type is a valid
@@ -142,5 +142,34 @@ BOOST_AUTO_TEST_CASE(discrete_mut_model_test_6)
                 }
         }
 }
+
 BOOST_AUTO_TEST_SUITE_END()
 
+BOOST_FIXTURE_TEST_SUITE(test_multilocus_regions, multiloc_popgenmut_fixture)
+BOOST_AUTO_TEST_CASE(test_bind_vec_drm)
+{
+    double length = 10.;
+    std::vector<extensions::discrete_rec_model> vdrm;
+    for (unsigned i = 0; i < 4; ++i)
+        {
+            double begin = static_cast<double>(i) * length;
+            extensions::discrete_rec_model drm(
+                { begin, begin + 3., begin + 7. },
+                { begin + 3., begin + 7., begin + length }, { 1., 10., 1. });
+            vdrm.emplace_back(std::move(drm));
+        }
+    auto bound = extensions::bind_vec_drm(vdrm, pop.gametes, pop.mutations,
+                                          rng.get(), mu);
+
+    double wbar = sample_diploid(
+        rng.get(), pop.gametes, pop.diploids, pop.mutations, pop.mcounts,
+        pop.N, &mu[0], mutmodels, bound, &rbw[0],
+        [](const gsl_rng* __r, const double __d) {
+            return gsl_ran_binomial(__r, __d, 1);
+        },
+        std::bind(multilocus_additive(), std::placeholders::_1,
+                  std::placeholders::_2, std::placeholders::_3),
+        pop.neutral, pop.selected);
+}
+
+BOOST_AUTO_TEST_SUITE_END()
