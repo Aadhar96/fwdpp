@@ -299,23 +299,54 @@ namespace KTfwd
         /*!
           Returns a function call bound to discrete_rec_model::operator().
 
-          See unit test extensions.cc for example usage.
+          See unit test extensions_regionsTest.cc for example usage.
          */
-        template <typename gcont_t, typename mcont_t, class... Args>
+        template <typename gcont_t, typename mcont_t>
         inline auto
         bind_drm(const discrete_rec_model &drm, const gcont_t &,
-                 const mcont_t &, Args &&... args)
+                 const mcont_t &, const gsl_rng *r, const double recrate)
             -> decltype(std::bind(&discrete_rec_model::operator() <
                                       typename gcont_t::value_type,
-                                  mcont_t >, &drm, std::forward<Args>(args)...,
+                                  mcont_t >, &drm, r, recrate,
                                   std::placeholders::_1, std::placeholders::_2,
                                   std::placeholders::_3))
         {
-            return std::bind(&discrete_rec_model::operator() <
-                                 typename gcont_t::value_type,
-                             mcont_t >, &drm, std::forward<Args>(args)...,
-                             std::placeholders::_1, std::placeholders::_2,
-                             std::placeholders::_3);
+            return std::bind(
+                &discrete_rec_model::operator() < typename gcont_t::value_type,
+                mcont_t >, &drm, r, recrate, std::placeholders::_1,
+                std::placeholders::_2, std::placeholders::_3);
+        }
+
+        /*! Returns a vector of function calls bound to
+         *  discrete_rec_model::operator()
+         */
+        template <typename gcont_t, typename mcont_t>
+        inline auto
+        bind_vec_drm(const std::vector<discrete_rec_model> &vdrm,
+                     const gcont_t &gametes, const mcont_t &mutations,
+                     const gsl_rng *r, const std::vector<double> &recrates)
+            -> std::vector<decltype(bind_drm(vdrm[0], gametes, mutations, r,
+                                             recrates[0]))>
+        {
+            if (vdrm.size() != recrates.size())
+                {
+                    throw std::runtime_error("unequal container sizes");
+                }
+            std::vector<decltype(
+                bind_drm(vdrm[0], gametes, mutations, r, recrates[0]))>
+                rv;
+            static_assert(
+                traits::is_rec_model<typename decltype(rv)::value_type,
+                                     typename gcont_t::value_type,
+                                     mcont_t>::value,
+                "bound object must be a valid recombination model");
+            std::size_t i = 0;
+            for (auto &&drm : vdrm)
+                {
+                    rv.emplace_back(
+                        bind_drm(drm, gametes, mutations, r, recrates[i++]));
+                }
+            return rv;
         }
     }
 }

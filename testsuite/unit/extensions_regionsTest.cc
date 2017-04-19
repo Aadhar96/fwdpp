@@ -281,7 +281,7 @@ BOOST_AUTO_TEST_CASE(discrete_rec_model_test_3)
 
 BOOST_AUTO_TEST_CASE(bound_drm_is_recmodel)
 {
-    extensions::discrete_rec_model drm({ 0, 1 }, { 1, 2 }, { 1, 2 });
+    extensions::discrete_rec_model drm({ 0, 1 }, { 1, 2 }, { 1, 1 });
     auto bound = extensions::bind_drm(drm, pop.gametes, pop.mutations,
                                       rng.get(), 0.001);
     static_assert(
@@ -292,6 +292,40 @@ BOOST_AUTO_TEST_CASE(bound_drm_is_recmodel)
         "bound object must be valid recombination model");
 }
 
+/* We are going to generate a set of recombination
+ * regions for a multi-locus
+ * simulation.  There will be five loci total.  Each locus
+ * (i=0 through 4) will have recombination occurring on
+ * the continuous inerval [i*10,i*10+10).  Further,
+ * each locus will have three regions of different
+ * relative recombination rates.  The positions of each
+ * region in each locus will be:
+ * [i*10,i*10+3)
+ * [i*10+3,i*10+7)
+ * [i*10+7,i*10+10)
+ * The relative weight on each region will be 1,10,1.
+ * The total recombination rate on each region will be 1e-4
+ * per diploid, per generation.
+ */
+BOOST_AUTO_TEST_CASE(bind_vec_drm_test)
+{
+    double length = 10.;
+    std::vector<extensions::discrete_rec_model> vdrm;
+    for (unsigned i = 0; i < 4; ++i)
+        {
+            double begin = static_cast<double>(i) * length;
+            extensions::discrete_rec_model drm(
+                { begin, begin + 3., begin + 7. },
+                { begin + 3., begin + 7., begin + length },
+                { 1., 10., 1. }
+				);
+            vdrm.emplace_back(std::move(drm));
+        }
+    std::vector<double> recrates{ 1e-4, 1e-4, 1e-4, 1e-4 };
+    auto bound = extensions::bind_vec_drm(vdrm, pop.gametes, pop.mutations,
+                                          rng.get(), recrates);
+	BOOST_REQUIRE_EQUAL(bound.size(),4);
+}
 // Put it all together into a call to KTfwd::sample_diploid
 /*
 BOOST_AUTO_TEST_CASE( discrete_rec_model_test_4 )
