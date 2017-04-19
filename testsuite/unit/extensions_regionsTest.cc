@@ -12,7 +12,7 @@
 
 using namespace KTfwd;
 
-using poptype = singlepop<popgenmut>;
+using poptype = singlepop_popgenmut_fixture::poptype;
 BOOST_FIXTURE_TEST_SUITE(test_extensions, singlepop_popgenmut_fixture)
 
 // Check that extensions::discrete_mut_model::make_mut compiles
