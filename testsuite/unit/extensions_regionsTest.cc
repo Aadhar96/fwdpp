@@ -98,10 +98,10 @@ BOOST_AUTO_TEST_CASE(discrete_rec_model_test_2)
 {
     extensions::discrete_rec_model drm({ 0, 1 }, { 1, 2 }, { 1, 2 });
     KTfwd::GSLrng_t<KTfwd::GSL_RNG_TAUS2> rng(0u);
-    auto bound = std::bind(&extensions::discrete_rec_model::operator()
-                               < poptype::gamete_t,
-                           decltype(pop.mutations) >, &drm, rng.get(), 0.001,
-                           pop.gametes[0], pop.gametes[0], pop.mutations);
+    auto bound = std::bind(
+        &extensions::discrete_rec_model::
+        operator()<poptype::gamete_t, decltype(pop.mutations)>,
+        &drm, rng.get(), 0.001, pop.gametes[0], pop.gametes[0], pop.mutations);
     auto x = bound();
     static_assert(std::is_same<decltype(x), std::vector<double>>::value,
                   "extensions::dicrete_rec_model::operator() must return "
@@ -113,10 +113,11 @@ BOOST_AUTO_TEST_CASE(discrete_rec_model_test_3)
 {
     extensions::discrete_rec_model drm({ 0, 1 }, { 1, 2 }, { 1, 2 });
     KTfwd::GSLrng_t<KTfwd::GSL_RNG_TAUS2> rng(0u);
-    auto bound = std::bind(
-        &extensions::discrete_rec_model::operator() < poptype::gamete_t,
-        decltype(pop.mutations) >, &drm, rng.get(), 0.001,
-        std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+    auto bound
+        = std::bind(&extensions::discrete_rec_model::
+                    operator()<poptype::gamete_t, decltype(pop.mutations)>,
+                    &drm, rng.get(), 0.001, std::placeholders::_1,
+                    std::placeholders::_2, std::placeholders::_3);
     static_assert(traits::is_rec_model<decltype(bound), poptype::gamete_t,
                                        poptype::mcont_t>::value,
                   "extensions::discrete_rec_model::operator() is not a valid "
@@ -140,40 +141,6 @@ BOOST_AUTO_TEST_CASE(bound_drm_is_recmodel)
         "bound object must be valid recombination model");
 }
 
-/* We are going to generate a set of recombination
- * regions for a multi-locus
- * simulation.  There will be five loci total.  Each locus
- * (i=0 through 4) will have recombination occurring on
- * the continuous inerval [i*10,i*10+10).  Further,
- * each locus will have three regions of different
- * relative recombination rates.  The positions of each
- * region in each locus will be:
- * [i*10,i*10+3)
- * [i*10+3,i*10+7)
- * [i*10+7,i*10+10)
- * The relative weight on each region will be 1,10,1.
- * The total recombination rate on each region will be 1e-4
- * per diploid, per generation.
- */
-BOOST_AUTO_TEST_CASE(bind_vec_drm_test)
-{
-    double length = 10.;
-    std::vector<extensions::discrete_rec_model> vdrm;
-    for (unsigned i = 0; i < 4; ++i)
-        {
-            double begin = static_cast<double>(i) * length;
-            extensions::discrete_rec_model drm(
-                { begin, begin + 3., begin + 7. },
-                { begin + 3., begin + 7., begin + length },
-                { 1., 10., 1. }
-				);
-            vdrm.emplace_back(std::move(drm));
-        }
-    std::vector<double> recrates{ 1e-4, 1e-4, 1e-4, 1e-4 };
-    auto bound = extensions::bind_vec_drm(vdrm, pop.gametes, pop.mutations,
-                                          rng.get(), recrates);
-	BOOST_REQUIRE_EQUAL(bound.size(),4);
-}
 // Put it all together into a call to KTfwd::sample_diploid
 /*
 BOOST_AUTO_TEST_CASE( discrete_rec_model_test_4 )
@@ -304,6 +271,23 @@ BOOST_AUTO_TEST_CASE(discrete_mut_model_constructor_should_throw)
                 { 0, 1 }, { 1, 2 }, { 1, 2 },
                 // There are selected regions, but no "sh models"
                 { 0, 1 }, { 1, 2 }, { 1 }, {}),
+            std::invalid_argument);
+    }
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_FIXTURE_TEST_SUITE(unit_test_bind_vectors_regions,
+                         multiloc_popgenmut_fixture)
+
+BOOST_AUTO_TEST_CASE(bind_vec_drm_test_exceptions)
+{
+    {
+        std::vector<double> recrates(3, 1e-4);
+
+        BOOST_REQUIRE_THROW(
+            auto bound = extensions::bind_vec_drm(
+                vdrm, pop.gametes, pop.mutations, rng.get(), recrates),
             std::invalid_argument);
     }
 }

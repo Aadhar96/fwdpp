@@ -89,6 +89,21 @@ class multiloc_popgenmut_fixture
             }
         return vdmm_;
     }
+    /* We are going to generate a set of recombination
+     * regions for a multi-locus
+     * simulation.  There will be five loci total.  Each locus
+     * (i=0 through 4) will have recombination occurring on
+     * the continuous inerval [i*10,i*10+10).  Further,
+     * each locus will have three regions of different
+     * relative recombination rates.  The positions of each
+     * region in each locus will be:
+     * [i*10,i*10+3)
+     * [i*10+3,i*10+7)
+     * [i*10+7,i*10+10)
+     * The relative weight on each region will be 1,10,1.
+     * The total recombination rate on each region will be 1e-4
+     * per diploid, per generation.
+     */
     std::vector<KTfwd::extensions::discrete_rec_model>
     fill_vdrm()
     {
