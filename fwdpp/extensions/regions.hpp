@@ -233,23 +233,38 @@ namespace KTfwd
                 std::forward<Args>(args)..., std::ref(mut_lookup));
         }
 
-		/*! Return a vector of callables bount
-		 *  to KTfwd::extensions::discrete_mut_model::make_mut
-		 */
+        /*! Return a vector of callables bount
+         *  to KTfwd::extensions::discrete_mut_model::make_mut
+         */
         template <typename mcont_t, typename lookup_t, class... Args>
         inline auto
         bind_vec_dmm(const std::vector<discrete_mut_model> &vdm,
-                     mcont_t &mutations, lookup_t &mut_lookup, Args &&... args)
-            -> std::vector<decltype(bind_dmm(vdm[0], mutations, mut_lookup,
-                                             std::forward<Args>(args)...))>
+                     mcont_t &mutations, lookup_t &mut_lookup,
+                     const gsl_rng *r,
+                     const std::vector<double> &neutral_mutrates,
+                     const std::vector<double> &selected_mutrates,
+                     Args &&... args)
+            -> std::vector<decltype(
+                bind_dmm(vdm[0], mutations, mut_lookup, r, neutral_mutrates[0],
+                         selected_mutrates[0], std::forward<Args>(args)...))>
         {
-            std::vector<decltype(bind_dmm(vdm[0], mutations, mut_lookup,
-                                          std::forward<Args>(args)...))>
+            if (vdm.size() != neutral_mutrates.size()
+                || vdm.size() != selected_mutrates.size())
+                {
+                    throw std::invalid_argument(
+                        "container sizes must all be equal");
+                }
+            std::vector<decltype(
+                bind_dmm(vdm[0], mutations, mut_lookup, r, neutral_mutrates[0],
+                         selected_mutrates[0], std::forward<Args>(args)...))>
                 rv;
+            std::size_t i = 0;
             for (auto &&dm : vdm)
                 {
-                    rv.emplace_back(bind_dmm(dm, mutations, mut_lookup,
-                                             std::forward<Args>(args)...));
+                    rv.emplace_back(bind_dmm(
+                        dm, mutations, mut_lookup, r, neutral_mutrates[i],
+                        selected_mutrates[i], std::forward<Args>(args)...));
+                    ++i;
                 }
             return rv;
         }
@@ -326,16 +341,16 @@ namespace KTfwd
         inline auto
         bind_drm(const discrete_rec_model &drm, const gcont_t &,
                  const mcont_t &, const gsl_rng *r, const double recrate)
-            -> decltype(std::bind(&discrete_rec_model::operator() <
-                                      typename gcont_t::value_type,
-                                  mcont_t >, &drm, r, recrate,
-                                  std::placeholders::_1, std::placeholders::_2,
-                                  std::placeholders::_3))
+            -> decltype(
+                std::bind(&discrete_rec_model::
+                          operator()<typename gcont_t::value_type, mcont_t>,
+                          &drm, r, recrate, std::placeholders::_1,
+                          std::placeholders::_2, std::placeholders::_3))
         {
-            return std::bind(
-                &discrete_rec_model::operator() < typename gcont_t::value_type,
-                mcont_t >, &drm, r, recrate, std::placeholders::_1,
-                std::placeholders::_2, std::placeholders::_3);
+            return std::bind(&discrete_rec_model::
+                             operator()<typename gcont_t::value_type, mcont_t>,
+                             &drm, r, recrate, std::placeholders::_1,
+                             std::placeholders::_2, std::placeholders::_3);
         }
 
         /*! Returns a vector of function calls bound to
