@@ -61,18 +61,18 @@ namespace KTfwd
                 if (nbeg.size() != nend.size()
                     || nbeg.size() != nweights.size())
                     {
-                        throw std::runtime_error(
+                        throw std::invalid_argument(
                             "input vectors must all be the same size");
                     }
                 if (sbeg.size() != send.size()
                     || sbeg.size() != sweights.size())
                     {
-                        throw std::runtime_error(
+                        throw std::invalid_argument(
                             "input vectors must all be the same size");
                     }
                 if (!sweights.empty() && sweights.size() != shmodels.size())
                     {
-                        throw std::runtime_error(
+                        throw std::invalid_argument(
                             "incorrect number of shmodels");
                     }
                 if (nweights.size())
@@ -115,19 +115,19 @@ namespace KTfwd
                     || nbeg.size() != nweights.size()
                     || nbeg.size() != nlabels.size())
                     {
-                        throw std::runtime_error(
+                        throw std::invalid_argument(
                             "input vectors must all be the same size");
                     }
                 if (sbeg.size() != send.size()
                     || sbeg.size() != sweights.size()
                     || sbeg.size() != slabels.size())
                     {
-                        throw std::runtime_error(
+                        throw std::invalid_argument(
                             "input vectors must all be the same size");
                     }
                 if (!sweights.empty() && sweights.size() != shmodels.size())
                     {
-                        throw std::runtime_error(
+                        throw std::invalid_argument(
                             "incorrect number of shmodels");
                     }
                 if (nweights.size())
@@ -290,7 +290,7 @@ namespace KTfwd
             {
                 if (beg.size() != end.size() || beg.size() != __weight.size())
                     {
-                        throw std::runtime_error(
+                        throw std::invalid_argument(
                             "input vectors must all be the same size");
                     }
 
@@ -366,7 +366,7 @@ namespace KTfwd
         {
             if (vdrm.size() != recrates.size())
                 {
-                    throw std::runtime_error("unequal container sizes");
+                    throw std::invalid_argument("unequal container sizes");
                 }
             std::vector<decltype(
                 bind_drm(vdrm[0], gametes, mutations, r, recrates[0]))>
