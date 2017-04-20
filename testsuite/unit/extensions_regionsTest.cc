@@ -270,17 +270,17 @@ BOOST_AUTO_TEST_CASE(discrete_rec_model_constructor_should_throw)
     {
         BOOST_REQUIRE_THROW(
             extensions::discrete_rec_model drm({ 0 }, { 1, 2 }, { 1, 2 }),
-            std::runtime_error);
+            std::invalid_argument);
     }
     {
         BOOST_REQUIRE_THROW(
             extensions::discrete_rec_model drm({ 0, 1 }, { 1 }, { 1, 2 }),
-            std::runtime_error);
+            std::invalid_argument);
     }
     {
         BOOST_REQUIRE_THROW(extensions::discrete_rec_model drm(
                                 { 0, 1 }, { 1, 2 }, { 1, 2, 3 }),
-                            std::runtime_error);
+                            std::invalid_argument);
     }
 }
 
@@ -289,14 +289,14 @@ BOOST_AUTO_TEST_CASE(discrete_mut_model_constructor_should_throw)
     {
         BOOST_REQUIRE_THROW(extensions::discrete_mut_model dm(
                                 { 0, 1 }, { 1, 2 }, { 1 }, {}, {}, {}, {}),
-                            std::runtime_error);
+                            std::invalid_argument);
     }
     {
         BOOST_REQUIRE_THROW(
             extensions::discrete_mut_model dm({ 0, 1 }, { 1, 2 }, { 1, 2 },
                                               // incorrect number of weights
                                               { 0, 1 }, { 1, 2 }, { 1 }, {}),
-            std::runtime_error);
+            std::invalid_argument);
     }
     {
         BOOST_REQUIRE_THROW(
@@ -304,7 +304,7 @@ BOOST_AUTO_TEST_CASE(discrete_mut_model_constructor_should_throw)
                 { 0, 1 }, { 1, 2 }, { 1, 2 },
                 // There are selected regions, but no "sh models"
                 { 0, 1 }, { 1, 2 }, { 1 }, {}),
-            std::runtime_error);
+            std::invalid_argument);
     }
 }
 
