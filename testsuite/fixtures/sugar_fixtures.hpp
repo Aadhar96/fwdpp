@@ -9,6 +9,7 @@
 #include <fwdpp/sugar/GSLrng_t.hpp>
 #include <fwdpp/recombination.hpp>
 #include <fwdpp/fitness_models.hpp>
+#include <fwdpp/extensions/regions.hpp>
 #include <fwdpp/sugar/serialization.hpp>
 #include <testsuite/util/custom_dip.hpp>
 #include <functional>
@@ -70,8 +71,44 @@ struct metapop_popgenmut_custom_fixture
     }
 };
 
-struct multiloc_popgenmut_fixture
+class multiloc_popgenmut_fixture
 {
+  private:
+    std::vector<KTfwd::extensions::discrete_mut_model>
+    fill_vdmm()
+    {
+        double length = 10.;
+        // create a vector of extensions::discrete_mut_model
+        std::vector<KTfwd::extensions::discrete_mut_model> vdmm_;
+        for (unsigned i = 0; i < 4; ++i)
+            {
+                double begin = static_cast<double>(i) * length;
+                KTfwd::extensions::discrete_mut_model dmm(
+                    { begin }, { begin + length }, { 1. }, {}, {}, {}, {});
+                vdmm_.emplace_back(std::move(dmm));
+            }
+        return vdmm_;
+    }
+    std::vector<KTfwd::extensions::discrete_rec_model>
+    fill_vdrm()
+    {
+        // set up a vector of extensions::discrete_rec_model
+        // with different regions sizes and weights
+        double length = 10.;
+        std::vector<KTfwd::extensions::discrete_rec_model> vdrm_;
+        for (unsigned i = 0; i < 4; ++i)
+            {
+                double begin = static_cast<double>(i) * length;
+                KTfwd::extensions::discrete_rec_model drm(
+                    { begin, begin + 3., begin + 7. },
+                    { begin + 3., begin + 7., begin + length },
+                    { 1., 10., 1. });
+                vdrm_.emplace_back(std::move(drm));
+            }
+        return vdrm_;
+    }
+
+  public:
     using poptype = KTfwd::multiloc<KTfwd::popgenmut>;
     using rng_t = KTfwd::GSLrng_t<KTfwd::GSL_RNG_TAUS2>;
     using mutmodel = std::function<std::size_t(std::queue<std::size_t> &,
@@ -84,6 +121,7 @@ struct multiloc_popgenmut_fixture
     // Fitness function
     struct multilocus_additive
     {
+      public:
         using result_type = double;
         inline double
         operator()(const poptype::dipvector_t::value_type &diploid,
@@ -109,6 +147,8 @@ struct multiloc_popgenmut_fixture
     std::vector<double> mu, rbw;
     std::vector<mutmodel> mutmodels;
     std::vector<recmodel> recmodels;
+    std::vector<KTfwd::extensions::discrete_mut_model> vdmm;
+    std::vector<KTfwd::extensions::discrete_rec_model> vdrm;
     multiloc_popgenmut_fixture(const unsigned seed = 0)
         /*! N=1000, 4 loci */
         : pop(poptype(1000, 4)),
@@ -159,8 +199,9 @@ struct multiloc_popgenmut_fixture
                       std::bind(KTfwd::poisson_xover(), rng.get(), 0.005, 3.,
                                 4., std::placeholders::_1,
                                 std::placeholders::_2,
-                                std::placeholders::_3) })
-
+                                std::placeholders::_3) }),
+          vdmm(this->fill_vdmm()),
+          vdrm(this->fill_vdrm())
     {
     }
 };

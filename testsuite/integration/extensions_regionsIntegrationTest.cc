@@ -124,31 +124,25 @@ BOOST_AUTO_TEST_CASE(discrete_mut_model_test_6)
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_FIXTURE_TEST_SUITE(test_multilocus_regions, multiloc_popgenmut_fixture)
-BOOST_AUTO_TEST_CASE(test_bind_vec_drm)
+BOOST_AUTO_TEST_CASE(test_bind_vec_dmm_drm)
+/* Test vectors of mutation/recombination regions
+ * The recombination region scheme is same as unit
+ * test bind_vec_drm_test in file testsuite/unit/extensions_regionsTest.cc
+ *
+ * The mutation setup is simpler--just neutral mutations.
+ *
+ * This test uses the multilocus fixture for the testsuite.
+ */
 {
-    double length = 10.;
-    std::vector<extensions::discrete_rec_model> vdrm;
-    for (unsigned i = 0; i < 4; ++i)
-        {
-            double begin = static_cast<double>(i) * length;
-            extensions::discrete_rec_model drm(
-                { begin, begin + 3., begin + 7. },
-                { begin + 3., begin + 7., begin + length }, { 1., 10., 1. });
-            vdrm.emplace_back(std::move(drm));
-        }
+    // create a set of bound callbacks.
+    // We use the fixture's mu to imply that
+    // mutation rate = recombination rate per region.
     auto bound_recmodels = extensions::bind_vec_drm(
         vdrm, pop.gametes, pop.mutations, rng.get(), mu);
 
-    unsigned generation = 0;
-    std::vector<extensions::discrete_mut_model> vdmm;
-    for (unsigned i = 0; i < 4; ++i)
-        {
-            double begin = static_cast<double>(i) * length;
-            extensions::discrete_mut_model dmm({ begin }, { begin + length },
-                                               { 1. }, {}, {}, {}, {});
-            vdmm.emplace_back(std::move(dmm));
-        }
+    // the mutation rates to neutra/selected variants
     std::vector<double> neutral_mutrates(4, 1e-3), selected_mutrates(4, 0.);
+    // create the bound callbacks
     auto bound_mutmodels = extensions::bind_vec_dmm(
         vdmm, pop.mutations, pop.mut_lookup, rng.get(), neutral_mutrates,
         selected_mutrates, generation);
