@@ -34,8 +34,9 @@ namespace KTfwd
 
       Examples of using this namespace are:
 
-      1. http://github.com/molpopgen/fwdpy
-      2. http://github.com/molpopgen/foRward
+      1. http://github.com/molpopgen/fwdpy (This project is deprecated
+      and no longer tracks changes to the extensions API.)
+      2. http://github.com/molpopgen/fwdpy11
      */
     namespace extensions
     {
