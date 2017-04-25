@@ -4,6 +4,8 @@
 #include <cmath>
 #include <limits>
 #include <functional>
+#include <gsl/gsl_rng.h>
+#include <gsl/gsl_randist.h>
 
 /*! \file fwd_functional.hpp
   Defines several function objects used both internally and by library users
@@ -49,6 +51,24 @@ namespace KTfwd
         operator()(const mtype &m) const
         {
             return m.neutral;
+        }
+    };
+
+    struct poisson_interlocus_rec
+    {
+        inline unsigned
+        operator()(const gsl_rng *r, const double mean) const noexcept
+        {
+            return gsl_ran_poisson(r, mean);
+        }
+    };
+
+    struct binomial_interlocus_rec
+    {
+        inline unsigned
+        operator()(const gsl_rng *r, const double cM) const noexcept
+        {
+            return gsl_ran_binomial(r, cM, 1);
         }
     };
 }
