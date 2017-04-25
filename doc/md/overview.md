@@ -356,7 +356,7 @@ Recycling allows us to use cache-friendly containers like `std::vector`.  It als
 
 ## Modeling the biology
 
-This section gives a quick overview of wht mutation, recombination, and fitness functions have to look like in order to be compatible with __fwdpp__.  After reading this document, you should go look at the source code for the example programs to get an idea of how these ideas are put into practice.
+This section gives a quick overview of what mutation, recombination, and fitness functions have to look like in order to be compatible with __fwdpp__.  After reading this document, you should go look at the source code for the example programs to get an idea of how these ideas are put into practice.
 
 This section uses the following shorthand notation for types:
 
