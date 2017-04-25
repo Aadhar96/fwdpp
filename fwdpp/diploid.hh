@@ -33,6 +33,7 @@
 #include <fwdpp/util.hpp>
 #include <fwdpp/IO.hpp>
 #include <fwdpp/recombination.hpp>
+#include <fwdpp/interlocus_recombination.hpp>
 #include <fwdpp/sample_diploid.hpp>
 #include <fwdpp/demography.hpp>
 #endif

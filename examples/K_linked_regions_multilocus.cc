@@ -105,13 +105,13 @@ main(int argc, char **argv)
                 []() { return 0.; }, []() { return 0.; }));
         }
     std::vector<std::function<unsigned(void)>> interlocus_rec(
-        K - 1, std::bind(KTfwd::binomial_interlocus_rec(), r.get(), rbw));
+        K - 1, std::bind(KTfwd::binomial_interlocus_rec(rbw), r.get()));
     for (generation = 0; generation < ngens; ++generation)
         {
             // Iterate the population through 1 generation
             KTfwd::sample_diploid(
                 r.get(), pop.gametes, pop.diploids, pop.mutations, pop.mcounts,
-                N, mu.data(), mmodels, recpols, interlocus_rec, 
+                N, mu.data(), mmodels, recpols, interlocus_rec,
                 std::bind(no_selection_multi(), std::placeholders::_1,
                           std::placeholders::_2, std::placeholders::_3),
                 pop.neutral, pop.selected);

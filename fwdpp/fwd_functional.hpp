@@ -56,8 +56,12 @@ namespace KTfwd
 
     struct poisson_interlocus_rec
     {
+        const double mean;
+
+        explicit poisson_interlocus_rec(const double mean_) : mean(mean_) {}
+
         inline unsigned
-        operator()(const gsl_rng *r, const double mean) const noexcept
+        operator()(const gsl_rng *r) const noexcept
         {
             return gsl_ran_poisson(r, mean);
         }
@@ -65,8 +69,12 @@ namespace KTfwd
 
     struct binomial_interlocus_rec
     {
+        const double cM;
+
+        explicit binomial_interlocus_rec(const double cM_) : cM(cM_) {}
+
         inline unsigned
-        operator()(const gsl_rng *r, const double cM) const noexcept
+        operator()(const gsl_rng *r) const noexcept
         {
             return gsl_ran_binomial(r, cM, 1);
         }
