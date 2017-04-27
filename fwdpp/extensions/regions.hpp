@@ -55,6 +55,14 @@ namespace KTfwd
                         throw std::invalid_argument(
                             "incorrect number of shmodels");
                     }
+                if (slabels.empty())
+                    {
+                        slabels.resize(sbeg.size(), 0);
+                    }
+                if (nlabels.empty())
+                    {
+                        nlabels.resize(nend.size(), 0);
+                    }
             }
         };
 
@@ -306,6 +314,7 @@ namespace KTfwd
                 : data(new discrete_rec_model_data(
                       std::move(__beg), std::move(__end), std::move(__weight)))
             {
+                assign_weights();
             }
 
             discrete_rec_model(const discrete_rec_model &drm)
@@ -332,7 +341,8 @@ namespace KTfwd
                        const gamete_t &, const gamete_t &,
                        const mcont_t &) const
             {
-                assert(!(recrate == 0. && (data->beg.empty() || data->end.empty())));
+                assert(!(recrate == 0.
+                         && (data->beg.empty() || data->end.empty())));
                 auto nbreaks = gsl_ran_poisson(r, recrate);
                 if (!nbreaks)
                     return {};
@@ -359,16 +369,16 @@ namespace KTfwd
         inline auto
         bind_drm(const discrete_rec_model &drm, const gcont_t &,
                  const mcont_t &, const gsl_rng *r, const double recrate)
-            -> decltype(
-                std::bind(&discrete_rec_model::
-                          operator()<typename gcont_t::value_type, mcont_t>,
-                          &drm, r, recrate, std::placeholders::_1,
-                          std::placeholders::_2, std::placeholders::_3))
+            -> decltype(std::bind(&discrete_rec_model::operator() <
+                                      typename gcont_t::value_type,
+                                  mcont_t >, &drm, r, recrate,
+                                  std::placeholders::_1, std::placeholders::_2,
+                                  std::placeholders::_3))
         {
-            return std::bind(&discrete_rec_model::
-                             operator()<typename gcont_t::value_type, mcont_t>,
-                             &drm, r, recrate, std::placeholders::_1,
-                             std::placeholders::_2, std::placeholders::_3);
+            return std::bind(
+                &discrete_rec_model::operator() < typename gcont_t::value_type,
+                mcont_t >, &drm, r, recrate, std::placeholders::_1,
+                std::placeholders::_2, std::placeholders::_3);
         }
 
         /*! Returns a vector of function calls bound to
