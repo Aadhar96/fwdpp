@@ -53,19 +53,5 @@ namespace KTfwd
             return m.neutral;
         }
     };
-
-    struct interlocus_rec
-    {
-        virtual ~interlocus_rec() = default;
-        std::function<unsigned(void)> f;
-        interlocus_rec(std::function<unsigned(void)> f_) : f{ std::move(f_) }
-        {
-        }
-        inline unsigned
-        operator()(void) const noexcept
-        {
-            return f();
-        }
-    };
 }
 #endif /* _FWD_FUNCTIONAL_HPP_ */

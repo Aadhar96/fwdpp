@@ -49,7 +49,7 @@ main(int argc, char **argv)
                       << "seed = seed value for random number generations\n";
             std::exit(0);
         }
-    const unsigned N = atoi(argv[argument++]); // Number of diploids
+    const unsigned N = atoi(argv[argument++]);   // Number of diploids
     const double theta = atof(argv[argument++]); // 4*n*mutation rate.  Note:
     // mutation rate is per
     // REGION, not SITE!!
@@ -124,8 +124,8 @@ main(int argc, char **argv)
                               []() { return 0.; }, []() { return 0.; })
                 };
 
-            std::vector<KTfwd::interlocus_rec> interlocus_rec(
-                2,KTfwd::interlocus_rec(std::bind(gsl_ran_binomial,r.get(),rbw,1)));
+            std::vector<std::function<unsigned(void)>> interlocus_rec{
+                std::bind(gsl_ran_binomial, r.get(), rbw, 1)};
 
             for (generation = 0; generation < ngens; ++generation)
                 {

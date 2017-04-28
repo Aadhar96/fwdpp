@@ -104,8 +104,8 @@ main(int argc, char **argv)
                 },
                 []() { return 0.; }, []() { return 0.; }));
         }
-    std::vector<KTfwd::interlocus_rec> interlocus_rec(
-        K - 1,KTfwd::interlocus_rec(std::bind(gsl_ran_binomial,r.get(),rbw,1))); 
+    std::vector<std::function<unsigned(void)>> interlocus_rec(
+        K - 1,std::bind(gsl_ran_binomial,r.get(),rbw,1)); 
     for (generation = 0; generation < ngens; ++generation)
         {
             // Iterate the population through 1 generation

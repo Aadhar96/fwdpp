@@ -73,8 +73,24 @@ setup3locus2(gcont_t &gametes, mcont_t &mutations, diploid_t &diploid)
     diploid.emplace_back(std::make_pair(4, 5));
     return;
 }
+
+struct always_recombine
+{
+    inline unsigned operator()() const
+    {
+        return 1u;
+    }
+};
+
 BOOST_FIXTURE_TEST_SUITE(multilocus_rec_mutTest,
                          standard_empty_multiloc_fixture)
+
+BOOST_AUTO_TEST_CASE(test_flexibility)
+{
+    std::vector<double> rates{1e-3,0.1};
+    auto x = KTfwd::make_poisson_interlocus_rec(r,rates.data(),rates.size());
+    x.emplace_back(always_recombine());
+}
 
 BOOST_AUTO_TEST_CASE(three_locus_test_1)
 {
@@ -115,11 +131,9 @@ BOOST_AUTO_TEST_CASE(three_locus_test_1)
                     const mcont_t &) { return rec1[2]; }
         };
 
-    std::vector<KTfwd::interlocus_rec> interlocus_rec{
-        KTfwd::interlocus_rec(
-            [&r_bw_loci]() { return static_cast<unsigned>(r_bw_loci[0]); }),
-        KTfwd::interlocus_rec(
-            [&r_bw_loci]() { return static_cast<unsigned>(r_bw_loci[1]); })
+    std::vector<std::function<unsigned(void)>> interlocus_rec{
+        [&r_bw_loci]() { return static_cast<unsigned>(r_bw_loci[0]); },
+        [&r_bw_loci]() { return static_cast<unsigned>(r_bw_loci[1]); }
     };
 
     auto offspring = KTfwd::fwdpp_internal::multilocus_rec_mut(
@@ -172,11 +186,9 @@ BOOST_AUTO_TEST_CASE(three_locus_test_2)
                     const mcont_t &) { return rec1[2]; }
         };
 
-    std::vector<KTfwd::interlocus_rec> interlocus_rec{
-        KTfwd::interlocus_rec(
-            [&r_bw_loci]() { return static_cast<unsigned>(r_bw_loci[0]); }),
-        KTfwd::interlocus_rec(
-            [&r_bw_loci]() { return static_cast<unsigned>(r_bw_loci[1]); })
+    std::vector<std::function<unsigned(void)>> interlocus_rec{
+        [&r_bw_loci]() { return static_cast<unsigned>(r_bw_loci[0]); },
+        [&r_bw_loci]() { return static_cast<unsigned>(r_bw_loci[1]); }
     };
 
     auto offspring = KTfwd::fwdpp_internal::multilocus_rec_mut(
@@ -233,11 +245,9 @@ BOOST_AUTO_TEST_CASE(three_locus_test_3)
                     const mcont_t &) { return rec1[2]; }
         };
 
-    std::vector<KTfwd::interlocus_rec> interlocus_rec{
-        KTfwd::interlocus_rec(
-            [&r_bw_loci]() { return static_cast<unsigned>(r_bw_loci[0]); }),
-        KTfwd::interlocus_rec(
-            [&r_bw_loci]() { return static_cast<unsigned>(r_bw_loci[1]); })
+    std::vector<std::function<unsigned(void)>> interlocus_rec{
+        [&r_bw_loci]() { return static_cast<unsigned>(r_bw_loci[0]); },
+        [&r_bw_loci]() { return static_cast<unsigned>(r_bw_loci[1]); }
     };
 
     auto offspring = KTfwd::fwdpp_internal::multilocus_rec_mut(
@@ -293,11 +303,9 @@ BOOST_AUTO_TEST_CASE(three_locus_test_4)
                     const mcont_t &) { return rec1[2]; }
         };
 
-    std::vector<KTfwd::interlocus_rec> interlocus_rec{
-        KTfwd::interlocus_rec(
-            [&r_bw_loci]() { return static_cast<unsigned>(r_bw_loci[0]); }),
-        KTfwd::interlocus_rec(
-            [&r_bw_loci]() { return static_cast<unsigned>(r_bw_loci[1]); })
+    std::vector<std::function<unsigned(void)>> interlocus_rec{
+        [&r_bw_loci]() { return static_cast<unsigned>(r_bw_loci[0]); },
+        [&r_bw_loci]() { return static_cast<unsigned>(r_bw_loci[1]); }
     };
 
     auto offspring = KTfwd::fwdpp_internal::multilocus_rec_mut(

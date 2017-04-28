@@ -31,7 +31,7 @@
 
 namespace KTfwd
 {
-    inline std::vector<interlocus_rec>
+    inline std::vector<std::function<unsigned(void)>>
     make_poisson_interlocus_rec(const gsl_rng* r, const double* means,
                                 const std::size_t n)
     /// \brief Create a vector of callbacks bound to
@@ -50,15 +50,15 @@ namespace KTfwd
     /// std::bind(KTfwd::poisson_interlocus_rec(means[i]),r) for 0 <= i < n;
     /// \ingroup mlocus
     {
-        std::vector<interlocus_rec> rv;
+        std::vector<std::function<unsigned(void)>> rv;
         for (std::size_t i = 0; i < n; ++i)
             {
-                rv.emplace_back(interlocus_rec(std::bind(gsl_ran_poisson,r,means[i])));
+                rv.emplace_back(std::bind(gsl_ran_poisson, r, means[i]));
             }
         return rv;
     }
 
-    inline std::vector<interlocus_rec>
+    inline std::vector<std::function<unsigned(void)>>
     make_binomial_interlocus_rec(const gsl_rng* r, const double* distances,
                                  const std::size_t n)
     /// \brief Create a vector of callbacks bound to
@@ -75,14 +75,16 @@ namespace KTfwd
     /// \endcode
     ///
     /// \return The result of
-    /// std::bind(KTfwd::binomial_interlocus_rec(distances[i]),r) for 0 <= i < n;
+    /// std::bind(KTfwd::binomial_interlocus_rec(distances[i]),r) for 0 <= i <
+    /// n;
     ///
     /// \ingroup mlocus
     {
-        std::vector<interlocus_rec> rv;
+        std::vector<std::function<unsigned(void)>> rv;
         for (std::size_t i = 0; i < n; ++i)
             {
-                rv.emplace_back(interlocus_rec(std::bind(gsl_ran_binomial,r,distances[i],1)));
+                rv.emplace_back(
+                    std::bind(gsl_ran_binomial, r, distances[i], 1));
             }
         return rv;
     }
