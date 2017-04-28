@@ -115,9 +115,11 @@ BOOST_AUTO_TEST_CASE(three_locus_test_1)
                     const mcont_t &) { return rec1[2]; }
         };
 
-    std::vector<std::function<unsigned(void)>> interlocus_rec{
-        [&r_bw_loci]() { return static_cast<unsigned>(r_bw_loci[0]); },
-        [&r_bw_loci]() { return static_cast<unsigned>(r_bw_loci[1]); }
+    std::vector<KTfwd::interlocus_rec> interlocus_rec{
+        KTfwd::interlocus_rec(
+            [&r_bw_loci]() { return static_cast<unsigned>(r_bw_loci[0]); }),
+        KTfwd::interlocus_rec(
+            [&r_bw_loci]() { return static_cast<unsigned>(r_bw_loci[1]); })
     };
 
     auto offspring = KTfwd::fwdpp_internal::multilocus_rec_mut(
@@ -170,9 +172,11 @@ BOOST_AUTO_TEST_CASE(three_locus_test_2)
                     const mcont_t &) { return rec1[2]; }
         };
 
-    std::vector<std::function<unsigned(void)>> interlocus_rec{
-        [&r_bw_loci]() { return static_cast<unsigned>(r_bw_loci[0]); },
-        [&r_bw_loci]() { return static_cast<unsigned>(r_bw_loci[1]); }
+    std::vector<KTfwd::interlocus_rec> interlocus_rec{
+        KTfwd::interlocus_rec(
+            [&r_bw_loci]() { return static_cast<unsigned>(r_bw_loci[0]); }),
+        KTfwd::interlocus_rec(
+            [&r_bw_loci]() { return static_cast<unsigned>(r_bw_loci[1]); })
     };
 
     auto offspring = KTfwd::fwdpp_internal::multilocus_rec_mut(
@@ -229,9 +233,11 @@ BOOST_AUTO_TEST_CASE(three_locus_test_3)
                     const mcont_t &) { return rec1[2]; }
         };
 
-    std::vector<std::function<unsigned(void)>> interlocus_rec{
-        [&r_bw_loci]() { return static_cast<unsigned>(r_bw_loci[0]); },
-        [&r_bw_loci]() { return static_cast<unsigned>(r_bw_loci[1]); }
+    std::vector<KTfwd::interlocus_rec> interlocus_rec{
+        KTfwd::interlocus_rec(
+            [&r_bw_loci]() { return static_cast<unsigned>(r_bw_loci[0]); }),
+        KTfwd::interlocus_rec(
+            [&r_bw_loci]() { return static_cast<unsigned>(r_bw_loci[1]); })
     };
 
     auto offspring = KTfwd::fwdpp_internal::multilocus_rec_mut(
@@ -287,9 +293,11 @@ BOOST_AUTO_TEST_CASE(three_locus_test_4)
                     const mcont_t &) { return rec1[2]; }
         };
 
-    std::vector<std::function<unsigned(void)>> interlocus_rec{
-        [&r_bw_loci]() { return static_cast<unsigned>(r_bw_loci[0]); },
-        [&r_bw_loci]() { return static_cast<unsigned>(r_bw_loci[1]); }
+    std::vector<KTfwd::interlocus_rec> interlocus_rec{
+        KTfwd::interlocus_rec(
+            [&r_bw_loci]() { return static_cast<unsigned>(r_bw_loci[0]); }),
+        KTfwd::interlocus_rec(
+            [&r_bw_loci]() { return static_cast<unsigned>(r_bw_loci[1]); })
     };
 
     auto offspring = KTfwd::fwdpp_internal::multilocus_rec_mut(

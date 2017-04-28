@@ -43,7 +43,7 @@ namespace KTfwd
             const diploid_type &parent2, mqueue_t &mutation_recycling_bin,
             gqueue_t &gamete_recycling_bin,
             const recombination_policy_container &rec_pols,
-            const std::vector<std::function<unsigned(void)>> &interlocus_rec,
+            const std::vector<interlocus_rec> &interlocus_rec,
             const int iswitch1,
 #ifndef FWDPP_UNIT_TESTING
             const int iswitch2, gcont_t &gametes, mcont_t &mutations,

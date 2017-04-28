@@ -124,8 +124,8 @@ main(int argc, char **argv)
                               []() { return 0.; }, []() { return 0.; })
                 };
 
-            std::vector<std::function<unsigned(void)>> interlocus_rec(
-                2, std::bind(KTfwd::binomial_interlocus_rec(rbw), r.get()));
+            std::vector<KTfwd::interlocus_rec> interlocus_rec(
+                2,KTfwd::interlocus_rec(std::bind(gsl_ran_binomial,r.get(),rbw,1)));
 
             for (generation = 0; generation < ngens; ++generation)
                 {
