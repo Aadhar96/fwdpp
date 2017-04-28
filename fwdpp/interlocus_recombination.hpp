@@ -34,8 +34,7 @@ namespace KTfwd
     inline std::vector<std::function<unsigned(void)>>
     make_poisson_interlocus_rec(const gsl_rng* r, const double* means,
                                 const std::size_t n)
-    /// \brief Create a vector of callbacks bound to
-    /// KTfwd::poisson_interlocus_rec
+    /// \brief Create a vector of callbacks bound to model interlocus recombination
     ///
     /// Example use for two loci with recombination occuring
     /// at rate 1e-3 between them:
@@ -46,8 +45,6 @@ namespace KTfwd
     /// KTfwd::make_poisson_interlocus_rec(r,recrates_bw_loci.data(),recrates_bw_loci.size());
     /// \endcode
     ///
-    /// \return The result of
-    /// std::bind(KTfwd::poisson_interlocus_rec(means[i]),r) for 0 <= i < n;
     /// \ingroup mlocus
     {
         std::vector<std::function<unsigned(void)>> rv;
@@ -61,8 +58,7 @@ namespace KTfwd
     inline std::vector<std::function<unsigned(void)>>
     make_binomial_interlocus_rec(const gsl_rng* r, const double* distances,
                                  const std::size_t n)
-    /// \brief Create a vector of callbacks bound to
-    /// KTfwd::binomial_interlocus_rec
+    /// \brief Create a vector of callbacks bound to model interlocus recombination
     ///
     /// Example of a three locus system where loci 0 and 1
     /// are 25cM apart and locus 2 is unlinked (50cM) from
@@ -73,10 +69,6 @@ namespace KTfwd
     /// auto interlocus_rec =
     /// KTfwd::make_binomial_interlocus_rec(r,recrates.data(),recrates.size());
     /// \endcode
-    ///
-    /// \return The result of
-    /// std::bind(KTfwd::binomial_interlocus_rec(distances[i]),r) for 0 <= i <
-    /// n;
     ///
     /// \ingroup mlocus
     {
